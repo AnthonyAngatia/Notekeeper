@@ -1,8 +1,10 @@
 package com.jwhh.notekeeper
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
 class NoteListActivity : AppCompatActivity() {
@@ -13,8 +15,16 @@ class NoteListActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val activityIntent = Intent(this, MainActivity::class.java)
+            startActivity(activityIntent)
+        }
+        val listNotes: ListView = findViewById(R.id.listNotes)
+        listNotes.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, DataManager.notes)
+
+        listNotes.setOnItemClickListener{parent, view, position, id ->
+            val activityIntent = Intent(this,MainActivity::class.java)
+            activityIntent.putExtra(EXTRA_NOTE_POSITION, position)
+            startActivity(activityIntent)
         }
     }
 }

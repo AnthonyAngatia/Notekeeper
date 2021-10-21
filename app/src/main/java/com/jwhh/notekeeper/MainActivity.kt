@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,25 +13,37 @@ import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
-    val spinnerCourses = findViewById<Spinner>(R.id.spinnerCourses)
+    private lateinit var textNoteTitle: EditText
+    private lateinit var textNoteText: EditText
+    private var notePosition = POSITION_NOT_SET
+    private lateinit var spinnerCourses: Spinner
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        val dm = DataManager()
+        spinnerCourses = findViewById<Spinner>(R.id.spinnerCourses)
+        textNoteTitle = findViewById(R.id.textNoteTitle)
+        textNoteText = findViewById(R.id.textNoteText)
         val adapterCourses = ArrayAdapter<CourseInfo>(this,
-            android.R.layout.simple_spinner_item, dm.courses.values.toList())
+            android.R.layout.simple_spinner_item, DataManager.courses.values.toList())
         adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         spinnerCourses.adapter = adapterCourses
 
+        notePosition = intent.getIntExtra(EXTRA_NOTE_POSITION, POSITION_NOT_SET)
+        if(notePosition != POSITION_NOT_SET)
+            displayNote()
+    }
 
+    private fun displayNote() {
+        val note = DataManager.notes[notePosition]
+        textNoteTitle.setText(note.title)
+        textNoteText.setText(note.text)
 
-
-
+        val coursePosition = DataManager.courses.values.indexOf(note.course)
+        spinnerCourses.setSelection(coursePosition)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
